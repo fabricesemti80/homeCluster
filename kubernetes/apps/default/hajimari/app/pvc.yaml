@@ -7,8 +7,22 @@ metadata:
   namespace: default
 spec:
   accessModes:
-    - ReadWriteMany  # Changed from ReadWriteOnce to ReadWriteMany for NFS
+    - ReadWriteMany
   storageClassName: nfs-client
   resources:
     requests:
       storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hajimari-data
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs-client
+  resources:
+    requests:
+      storage: 1Gi
+---
