@@ -1,0 +1,47 @@
+---
+# HelmRelease for NFS Subdir External Provisioner
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: nfs-subdir-external-provisioner
+  namespace: storage-system # You can change this namespace as needed
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: nfs-subdir-external-provisioner
+      version: 4.0.18  # Check for the latest version
+      sourceRef:
+        kind: HelmRepository
+        name: nfs-subdir-external-provisioner
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  values:
+    nfs:
+      server: 10.0.40.250
+      path: /PersistentVolumeClaims
+    storageClass:
+      name: nfs-client  # This will be your StorageClass name
+      defaultClass: false  # Set to true if you want this to be the default StorageClass
+      archiveOnDelete: false  # Set to true if you want to keep the data when PVC is deleted
+    
+    # Optional: Enable Prometheus ServiceMonitor
+    serviceMonitor:
+      enabled: true
+    
+    # Optional: Add resource limits
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
